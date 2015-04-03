@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Draggable</title>
+	<link rel="stylesheet" type="text/css" href="fullscreen.css">
+	<link rel="stylesheet" type="text/css" href="site.css">
+</head>
+<body>
+	<div class="box" style="top: 0; left: 0;">
+		<div class="header">
+			<p>Box Header</p>
+		</div>
+		<div class="content">
+			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+		</div>
+	</div>
+	<script type="text/javascript" src="lib/kefir.min.js"></script>
+	<script type="text/javascript" src="util.js"></script>
+	<script>
+		var boxes = document.getElementsByClassName('box');
+		boxes = Array.prototype.map.call(boxes, function (x) { return x; });
+
+		function asMousedownStreams(box) {
+			var header = box.getElementsByClassName('header')[0];
+			return Kefir.fromEvent(header, 'mousedown')
+				.map(function (event) {
+					return {
+						element: box,
+						position: getMouseCoords(event),
+						elementPosition: getPosition(box)
+					};
+				});
+		}
+
+		function dragElement(initial) {
+			var mousemoveStream = Kefir.fromEvent(document, 'mousemove');
+			var mouseupStream = Kefir.fromEvent(document, 'mouseup');
+			mousemoveStream
+				.takeUntilBy(mouseupStream)
+				.onValue(function (position) {
+					var delta = subtractVectors(position, initial.position);
+					var newPosition = addVectors(initial.elementPosition, delta);
+					initial.element.style.left = newPosition.x + 'px';
+					initial.element.style.top = newPosition.y + 'px';
+				});
+		}
+
+		boxes.map(asMousedownStreams)
+			.forEach(function (stream) {
+				stream.onValue(dragElement);
+			});
+
+	</script>
+</body>
+</html>

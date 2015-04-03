@@ -1,0 +1,28 @@
+.box {
+	position: absolute;
+	width: 200px;
+	height: 140px;
+	overflow: hidden;
+	border-color: #a2a260;
+	border-width: 2px;
+	border-style: solid;
+	box-sizing: border-box;
+}
+.box .header {
+	background-color: lightgray;
+	margin: 0;
+	padding: 0 2px;
+	background-color: #e4e487;
+	height: 21px;
+}
+.box .header p {
+	margin: 0;
+	padding-top: 1px;
+}
+.box .content {
+	background-color: #fdfda0;
+	padding: 0 2px;
+}
+.box .content p {
+	margin: 0;
+}

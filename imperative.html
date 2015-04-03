@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Draggable</title>
+	<link rel="stylesheet" type="text/css" href="fullscreen.css">
+	<link rel="stylesheet" type="text/css" href="site.css">
+</head>
+<body>
+	<div class="box" style="top: 0; left: 0;">
+		<div class="header">
+			<p>Box Header</p>
+		</div>
+		<div class="content">
+			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+		</div>
+	</div>
+	<script type="text/javascript" src="util.js"></script>
+	<script>
+		var boxes = document.getElementsByClassName('box');
+		boxes = Array.prototype.map.call(boxes, function (x) { return x; });
+
+		var draggedBox, initialElementPosition, initialMousePosition;
+		
+		function attachEventsToBox(box) {
+			var header = box.getElementsByClassName('header')[0];
+			header.addEventListener('mousedown', onMouseDown);
+		}
+
+		function onMouseDown(event) {
+			event.preventDefault();
+			draggedBox = this.parentElement;
+			initialElementPosition = getPosition(this);
+			initialMousePosition = getMouseCoords(event);
+			
+			document.addEventListener('mousemove', onMouseMove);
+			document.addEventListener('mouseup', onMouseUp);
+		}
+
+		// to prevent mouse moves that are too fast,
+		// bind mouse moves and ups to the window
+		function onMouseMove(event) {
+			setDraggedBoxPosition(draggedBox, event);
+		}
+
+		function onMouseUp(event) {
+			setDraggedBoxPosition(draggedBox, event);
+			document.removeEventListener('mousemove', onMouseMove);
+			document.removeEventListener('mouseup', onMouseUp);
+			draggedBox = null;
+			draggedInitialPosition = null;
+		}
+
+		function setDraggedBoxPosition(element, event) {
+			var mousePosition = getMouseCoords(event);
+			var delta = subtractVectors(mousePosition, initialMousePosition);
+			var newPosition = addVectors(initialElementPosition, delta);
+			draggedBox.style.left = newPosition.x + 'px';
+			draggedBox.style.top = newPosition.y + 'px';
+		}
+
+		boxes.forEach(attachEventsToBox);
+	</script>
+</body>
+</html>
